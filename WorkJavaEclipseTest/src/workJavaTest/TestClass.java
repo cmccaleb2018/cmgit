@@ -13,7 +13,7 @@ public class TestClass extends Frame {
 		
 		
 	}
-
+// comment added after first commit
 	public TestClass() {
 
 		super("Java 2D Example01");
