@@ -6,6 +6,11 @@ import java.awt.event.*;
 
 public class TestClass extends Frame {
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
 	 * Instantiates an TestClass object.
 	 **/
 	public static void main(String args[]) {
