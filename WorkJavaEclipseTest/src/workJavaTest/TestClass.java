@@ -14,6 +14,7 @@ public class TestClass extends Frame {
 		
 	}
 // comment added after first commit
+	// comment added after second commit
 	public TestClass() {
 
 		super("Java 2D Example01");
