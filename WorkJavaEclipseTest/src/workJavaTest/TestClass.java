@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 public class TestClass extends Frame {
 	/**
 	 * 
@@ -36,6 +39,36 @@ public class TestClass extends Frame {
 				dispose();
 				System.exit(0);
 			}
+		});
+		
+		addMouseListener(new MouseListener() {
+		//    @Override
+		    public void mouseClicked(MouseEvent e) {
+		    }
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 		});
 	}
 
@@ -103,4 +136,10 @@ public void aaa (Graphics x)
 	frm.paint(g);
 	
 	}*/
+	
+	public void mouseClicked(MouseEvent e) {
+	    int x=e.getX();
+	    int y=e.getY();
+	    System.out.println(x+","+y);//these co-ords are relative to the component
+	}
 }
