@@ -3,11 +3,10 @@ package workJavaTest;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-public class TestClass extends Frame {
+public class TestClass extends JFrame {
 	/**
 	 * 
 	 */
@@ -18,70 +17,71 @@ public class TestClass extends Frame {
 	 **/
 	public static void main(String args[]) {
 		new TestClass();
-		
-		
+
 	}
-// comment added after first commit
-	// comment added after second commit
-	// comment added to laptop branch only!!!
-	// comment to again test push
-	// comment added from laptop
-	// all above comments merged from 2 branches
-	
 
 	public TestClass() {
 
 		super("Java 2D Example01");
 		setSize(400, 300);
 		setVisible(true);
+
+		final JTextField text = new JTextField();
+		add(text, BorderLayout.NORTH);
+
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				dispose();
 				System.exit(0);
 			}
 		});
-		
+
 		addMouseListener(new MouseListener() {
-		//    @Override
-		    public void mouseClicked(MouseEvent e) {
-		    }
+			// @Override
+			public void mouseClicked(MouseEvent e) {
 
-		@Override
-		public void mouseEntered(MouseEvent arg0) {
-			// TODO Auto-generated method stub
-			
-		}
+				int x = e.getX();
+				int y = e.getY();
+				System.out.println(x + "," + y);
+				text.setText("X:" + x + " Y:" + y);
+			}
 
-		@Override
-		public void mouseExited(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
 
-		@Override
-		public void mousePressed(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
+			}
 
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
 		});
 	}
 
 	/*
-	 * ...the Java runtime constructs a rendering object and passes it to paint()
+	 * ...the Java runtime constructs a rendering object and passes it to
+	 * paint()
 	 * 
 	 * from:
 	 * 
-	 * https://www.javaworld.com/article/2076715/java-se/getting-started-with-java-
-	 * 2d.html
-	 * 
+	 * https://www.javaworld.com/article/2076715/java-se/getting-started-with-java
+	 * - 2d.html
 	 */
-
+	
 	public void paint(Graphics g) {
 		g.setColor(Color.red);
 		g.drawRect(50, 50, 200, 200);
@@ -128,18 +128,5 @@ public class TestClass extends Frame {
 		g3.setColor(Color.red);
 		g3.fill(path2);
 
-	}
-/*	
-public void aaa (Graphics x)
-{
-	Frame frm = new Frame();
-	frm.paint(g);
-	
-	}*/
-	
-	public void mouseClicked(MouseEvent e) {
-	    int x=e.getX();
-	    int y=e.getY();
-	    System.out.println(x+","+y);//these co-ords are relative to the component
 	}
 }
