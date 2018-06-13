@@ -14,8 +14,8 @@ public class CGMoveALine extends JFrame {
 	// Define constants for the various dimensions
 	public static final int CANVAS_WIDTH = 400;
 	public static final int CANVAS_HEIGHT = 140;
-	public static final Color LINE_COLOR = Color.BLACK;
-	public static final Color CANVAS_BACKGROUND = Color.CYAN;
+	public static final Color LINE_COLOR = Color.RED;
+	public static final Color CANVAS_BACKGROUND = Color.BLACK;
 
 	// The moving line from (x1, y1) to (x2, y2), initially position at the
 	// center
@@ -24,7 +24,7 @@ public class CGMoveALine extends JFrame {
 	private int x2 = x1;
 	private int y2 = CANVAS_HEIGHT / 8 * 7;
 
-	private DrawCanvas canvas; // The custom drawing canvas (an innder class
+	private DrawCanvas canvas; // The custom drawing canvas (an inner class
 								// extends JPanel)
 
 	public static void main(String[] args) {
