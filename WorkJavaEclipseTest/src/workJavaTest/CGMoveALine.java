@@ -9,6 +9,7 @@ import javax.swing.*; // Using Swing's components and containers
  */
 @SuppressWarnings("serial")
 // The entry main() method
+
 public class CGMoveALine extends JFrame {
 	// Define constants for the various dimensions
 	public static final int CANVAS_WIDTH = 400;
