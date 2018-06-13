@@ -3,7 +3,8 @@ package workJavaTest;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
 
 public class TestClass extends JFrame {
 	/**
@@ -21,12 +22,6 @@ public class TestClass extends JFrame {
 		new TestClass();
 
 	}
-	// comment added after first commit
-	// comment added after second commit
-	// comment added to laptop branch only!!!
-	// comment to again test push
-	// comment added from laptop
-	// all above comments merged from 2 branches
 
 	public TestClass() {
 
@@ -35,17 +30,9 @@ public class TestClass extends JFrame {
 		getContentPane().setBackground(bgc);
 		setVisible(true);
 
-		// works for Frames, but not JFrames:
-		/*setBackground(bgc);*/
 
-		
-		
-/*		JPanel jp = new JPanel();
-		jp.setBackground(bgc);
-		jp.setSize(200,200);
-		jp.setVisible(true);
-
-		this.add(jp);*/
+		final JTextField text = new JTextField();
+		add(text, BorderLayout.NORTH);
 
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -53,18 +40,53 @@ public class TestClass extends JFrame {
 				System.exit(0);
 			}
 		});
+
+		addMouseListener(new MouseListener() {
+			// @Override
+			public void mouseClicked(MouseEvent e) {
+
+				int x = e.getX();
+				int y = e.getY();
+				System.out.println(x + "," + y);
+				text.setText("X:" + x + " Y:" + y);
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	/*
-	 * ...the Java runtime constructs a rendering object and passes it to paint()
+	 * ...the Java runtime constructs a rendering object and passes it to
+	 * paint()
 	 * 
 	 * from:
 	 * 
-	 * https://www.javaworld.com/article/2076715/java-se/getting-started-with-java-
-	 * 2d.html
-	 * 
+	 * https://www.javaworld.com/article/2076715/java-se/getting-started-with-java
+	 * - 2d.html
 	 */
-
+	
 	public void paint(Graphics g) {
 		
 		g.setColor(Color.red);
@@ -113,9 +135,5 @@ public class TestClass extends JFrame {
 		g3.fill(path2);
 
 	}
-	/*
-	 * public void aaa (Graphics x) { Frame frm = new Frame(); frm.paint(g);
-	 * 
-	 * }
-	 */
+
 }
