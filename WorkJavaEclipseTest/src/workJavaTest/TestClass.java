@@ -3,34 +3,50 @@ package workJavaTest;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.event.*;
+import javax.swing.*;
 
-public class TestClass extends Frame {
+public class TestClass extends JFrame {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	// background color
+	Color bgc = new Color(1, 100, 200);
 
 	/**
 	 * Instantiates an TestClass object.
 	 **/
 	public static void main(String args[]) {
 		new TestClass();
-		
-		
+
 	}
-// comment added after first commit
+	// comment added after first commit
 	// comment added after second commit
 	// comment added to laptop branch only!!!
 	// comment to again test push
 	// comment added from laptop
 	// all above comments merged from 2 branches
-	
 
 	public TestClass() {
 
 		super("Java 2D Example01");
 		setSize(400, 300);
+		getContentPane().setBackground(bgc);
 		setVisible(true);
+
+		// works for Frames, but not JFrames:
+		/*setBackground(bgc);*/
+
+		
+		
+/*		JPanel jp = new JPanel();
+		jp.setBackground(bgc);
+		jp.setSize(200,200);
+		jp.setVisible(true);
+
+		this.add(jp);*/
+
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				dispose();
@@ -50,6 +66,7 @@ public class TestClass extends Frame {
 	 */
 
 	public void paint(Graphics g) {
+		
 		g.setColor(Color.red);
 		g.drawRect(50, 50, 200, 200);
 		Graphics2D g2d = (Graphics2D) g;
@@ -96,11 +113,9 @@ public class TestClass extends Frame {
 		g3.fill(path2);
 
 	}
-/*	
-public void aaa (Graphics x)
-{
-	Frame frm = new Frame();
-	frm.paint(g);
-	
-	}*/
+	/*
+	 * public void aaa (Graphics x) { Frame frm = new Frame(); frm.paint(g);
+	 * 
+	 * }
+	 */
 }
