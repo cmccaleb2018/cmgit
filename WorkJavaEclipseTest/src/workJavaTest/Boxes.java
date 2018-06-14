@@ -1,6 +1,5 @@
 package workJavaTest;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -146,6 +145,8 @@ public class Boxes extends JFrame {
 		});
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Handle the CLOSE button
+		
+		
 
 	}
 
