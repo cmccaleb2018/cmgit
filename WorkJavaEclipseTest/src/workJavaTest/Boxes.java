@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -46,7 +47,7 @@ public class Boxes extends JFrame {
 		y1 = CANVAS_HEIGHT / 8;
 		x2 = 100; // x1;
 		y2 = 100; // CANVAS_HEIGHT / 8 * 7;
-		System.out.println(x1 + "," + y1 + "," + x2 + "," + y2 );
+		System.out.println(x1 + "," + y1 + "," + x2 + "," + y2);
 
 	}
 
@@ -57,17 +58,21 @@ public class Boxes extends JFrame {
 		setTitle("Boxes");
 
 		setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+		setResizable(false);
 
 		// jf.setBackground(CANVAS_BACKGROUND);
 
-		APanel jp = new APanel();
+		APanel ap = new APanel();
+		//BPanel bp = new BPanel();
 
 		// jp.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
 
 		Container cp = getContentPane();
-		cp.setLayout(new BorderLayout());
+		//cp.setLayout(new BorderLayout());
 
-		cp.add(jp, BorderLayout.CENTER);
+		//cp.add(jp, BorderLayout.CENTER);
+		cp.add(ap);
+		//cp.add(bp);
 
 		pack();
 
@@ -152,6 +157,29 @@ public class Boxes extends JFrame {
 			g.setColor(LINE_COLOR);
 			g.fillRect(x1, y1, x2, y2); // Draw the line
 
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setColor(Color.YELLOW);
+			g2.fillOval(20, 30, 100, 20);
+			
+			
+//			super.paintComponent(g2);
+
 		}
 	}
-}
+/*	class BPanel extends JPanel {
+		@Override
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g);
+			setBackground(CANVAS_BACKGROUND);
+			g.setColor(LINE_COLOR);
+			g.fillRect(x1, y1, x2, y2); // Draw the line
+
+			Graphics2D g2 = (Graphics2D) g;
+			g.setColor(Color.YELLOW);
+			g.drawOval(20, 30, 100, 20);
+			
+			
+//			super.paintComponent(g2);
+
+		}}
+*/}
