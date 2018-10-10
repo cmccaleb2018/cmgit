@@ -5,6 +5,7 @@ package spaceInvaders;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -15,6 +16,7 @@ import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.util.Random;
@@ -145,6 +147,12 @@ public class Game extends Canvas {
 		// to see at startup
 
 		initEntities();
+		
+		/// aaalabel
+		
+		JLabel jlabel = new JLabel("This is a label");
+	    jlabel.setFont(new Font("Verdana",1,20));
+	    panel.add(jlabel);
 	}
 
 	/**
@@ -188,7 +196,7 @@ public class Game extends Canvas {
 		}
 		
 		
-		WildAlien wild = new WildAlien(this, "sprites/alien.gif", 100, 100);	
+		WildAlien wild = new WildAlien(this, "sprites/alien.gif", 300, 300);	
 		entities.add(wild);
 		
 		/// add a block here?
@@ -605,6 +613,13 @@ public class Game extends Canvas {
 		
 		g.setColor(Color.red);
 		g.drawLine(x+20, y+20, ship_x, ship_y);
+		
+	}
+	public void DevMessage(String s)
+	{
+		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+		g.setColor(Color.white);
+		g.drawString(s,5,590);
 		
 	}
 }
