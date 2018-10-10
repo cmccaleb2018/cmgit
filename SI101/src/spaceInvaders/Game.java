@@ -1,3 +1,5 @@
+/// next - change rg alien to wild alien randomly, or maybe when they fire, maybe they are the only ones to fire
+
 package spaceInvaders;
 
 import java.awt.Canvas;
@@ -184,6 +186,10 @@ public class Game extends Canvas {
 				alienCount++;
 			}
 		}
+		
+		
+		WildAlien wild = new WildAlien(this, "sprites/alien.gif", 100, 100);	
+		entities.add(wild);
 		
 		/// add a block here?
 		//AlienEntity shield = new AlienEntity(null, message, alienCount, alienCount);
