@@ -129,7 +129,7 @@ public abstract class Entity {
 	}
 	
 	/**
-	 * Check if this entity collised with another.
+	 * Check if this entity collided with another.
 	 * 
 	 * @param other The other entity to check collision against
 	 * @return True if the entities collide with each other

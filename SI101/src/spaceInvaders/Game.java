@@ -1,4 +1,5 @@
 /// next - change rg alien to wild alien randomly, or maybe when they fire, maybe they are the only ones to fire
+/// go ahead and just find a gif for barriers; add barriers and some way to take damage, change color as they do 
 
 package spaceInvaders;
 
@@ -20,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.util.Random;
+import java.util.TimerTask;
 
 /**
  * The main hook of our game. This class with both act as a manager for the
@@ -45,9 +47,9 @@ public class Game extends Canvas {
 	/** True if the game is currently "running", i.e. the game loop is looping */
 	private boolean gameRunning = true;
 	/**
-	 * The list of all the entities that exist in our game Added <Entity> as I
-	 * was getting 'references to generic type should be paramaterized error
-	 * */
+	 * The list of all the entities that exist in our game Added <Entity> as I was
+	 * getting 'references to generic type should be paramaterized error
+	 */
 
 	private ArrayList<Entity> entities = new ArrayList<Entity>();
 	/** The list of entities that need to be removed from the game this loop */
@@ -75,15 +77,24 @@ public class Game extends Canvas {
 	/** True if we are firing */
 	private boolean firePressed = false;
 	/**
-	 * True if game logic needs to be applied this loop, normally as a result of
-	 * a game event
+	 * True if game logic needs to be applied this loop, normally as a result of a
+	 * game event
 	 */
 	private boolean logicRequiredThisLoop = false;
+
 	/** The number of invader shots to one ship shot */
 	private int numInvadershots = 2;
 
 	private static int FRAME_WIDTH = 800;
 	private static int FRAME_HEIGHT = 600;
+
+	/** The list of wild invaders entities */
+	private ArrayList<Entity> wildList = new ArrayList<Entity>();
+
+	/** The interval in seconds for wild invader fire */
+	private int wildfireinterval = 4;
+	private int wildfireinterval_milli = wildfireinterval * 1000;
+	private int wildfireinterval_inc = 0;
 
 	/**
 	 * Construct our game and set it running.
@@ -147,17 +158,11 @@ public class Game extends Canvas {
 		// to see at startup
 
 		initEntities();
-		
-		/// aaalabel
-		
-		JLabel jlabel = new JLabel("This is a label");
-	    jlabel.setFont(new Font("Verdana",1,20));
-	    panel.add(jlabel);
+
 	}
 
 	/**
-	 * Start a fresh game, this should clear out any old data and create a new
-	 * set.
+	 * Start a fresh game, this should clear out any old data and create a new set.
 	 */
 	private void startGame() {
 		// clear out any existing entities and intialise a new set
@@ -188,19 +193,18 @@ public class Game extends Canvas {
 		alienCount = 0;
 		for (int row = 0; row < 5; row++) {
 			for (int x = 0; x < 12; x++) {
-				Entity alien = new AlienEntity(this, "sprites/alien.gif",
-						100 + (x * 50), (50) + row * 30);
+				Entity alien = new AlienEntity(this, "sprites/alien.gif", 100 + (x * 50), (50) + row * 30);
 				entities.add(alien);
 				alienCount++;
 			}
 		}
-		
-		
-		WildAlien wild = new WildAlien(this, "sprites/alien.gif", 300, 300);	
+
+		WildAlien wild = new WildAlien(this, "sprites/alien.gif", 300, 10);
 		entities.add(wild);
-		
+		wildList.add(wild);
+
 		/// add a block here?
-		//AlienEntity shield = new AlienEntity(null, message, alienCount, alienCount);
+		// AlienEntity shield = new AlienEntity(null, message, alienCount, alienCount);
 
 	}
 
@@ -210,31 +214,30 @@ public class Game extends Canvas {
 		// horizontals
 		int num = FRAME_WIDTH / scale;
 		for (int x = 0; x < num; x++) {
-			g.drawLine(0, x*scale, FRAME_WIDTH, x*scale);
+			g.drawLine(0, x * scale, FRAME_WIDTH, x * scale);
 		}
-		
+
 		// verticals
 		num = FRAME_HEIGHT / scale;
 		for (int x = 0; x < num; x++) {
-			g.drawLine(x*scale, 0, x*scale, FRAME_HEIGHT);
+			g.drawLine(x * scale, 0, x * scale, FRAME_HEIGHT);
 		}
 
 	}
 
 	/**
-	 * Notification from a game entity that the logic of the game should be run
-	 * at the next opportunity (normally as a result of some game event)
+	 * Notification from a game entity that the logic of the game should be run at
+	 * the next opportunity (normally as a result of some game event)
 	 */
 	public void updateLogic() {
 		logicRequiredThisLoop = true;
 	}
 
 	/**
-	 * Remove an entity from the game. The entity removed will no longer move or
-	 * be drawn.
+	 * Remove an entity from the game. The entity removed will no longer move or be
+	 * drawn.
 	 * 
-	 * @param entity
-	 *            The entity that should be removed
+	 * @param entity The entity that should be removed
 	 */
 	public void removeEntity(Entity entity) {
 		removeList.add(entity);
@@ -285,9 +288,9 @@ public class Game extends Canvas {
 	}
 
 	/**
-	 * Attempt to fire a shot from the player. Its called "try" since we must
-	 * first check that the player can fire at this point, i.e. has he/she
-	 * waited long enough between shots
+	 * Attempt to fire a shot from the player. Its called "try" since we must first
+	 * check that the player can fire at this point, i.e. has he/she waited long
+	 * enough between shots
 	 */
 	public void tryToFire() {
 		// check that we have waiting long enough to fire
@@ -300,20 +303,10 @@ public class Game extends Canvas {
 		// time.
 
 		lastFire = System.currentTimeMillis();
-		ShotEntity shot = new ShotEntity(this, "sprites/shot.gif",
-				ship.getX() + 10, ship.getY() - 30);
+		ShotEntity shot = new ShotEntity(this, "sprites/shot.gif", ship.getX() + 10, ship.getY() - 30);
 		entities.add(shot);
 
-		// pick random invader and have them return fire
-		// zzz
-
-		// later pick out an actual alien entity but for now just pick
-		// any entity.
-
-		// for (int i = 0; i < entities.size(); i++) {
-		// Entity entity = (Entity) entities.get(i);
-		// entity.doLogic();
-		// }
+		// pick random invader(s) and have them return fire
 
 		for (int x = 0; x < numInvadershots; x++) {
 
@@ -322,20 +315,20 @@ public class Game extends Canvas {
 
 			Entity shooter = (Entity) entities.get(n);
 
-			InvaderShot ishot = new InvaderShot(this, "sprites/shot.gif",
-					shooter.getX(), shooter.getY());
+			InvaderShot ishot = new InvaderShot(this, "sprites/shot.gif", shooter.getX(), shooter.getY());
 			// System.out.println(n.toString());
 			entities.add(ishot);
 		}
+
 	}
 
 	/**
 	 * The main game loop. This loop is running during all game play as is
 	 * responsible for the following activities:
 	 * <p>
-	 * - Working out the speed of the game loop to update moves - Moving the
-	 * game entities - Drawing the screen contents (entities, text) - Updating
-	 * game events - Checking Input
+	 * - Working out the speed of the game loop to update moves - Moving the game
+	 * entities - Drawing the screen contents (entities, text) - Updating game
+	 * events - Checking Input
 	 * <p>
 	 */
 	public void gameLoop() {
@@ -380,8 +373,8 @@ public class Game extends Canvas {
 			}
 
 //			DrawGrid(g, 50);
-			
-			DrawLineTo10(g);
+
+//			DrawLineTo10(g);
 
 			// brute force collisions, compare every entity against
 
@@ -426,17 +419,16 @@ public class Game extends Canvas {
 
 			if (waitingForKeyPress) {
 				g.setColor(Color.white);
-				g.drawString(message,
-						(800 - g.getFontMetrics().stringWidth(message)) / 2,
-						250);
-				g.drawString("Press any key", (800 - g.getFontMetrics()
-						.stringWidth("Press any key")) / 2, 300);
+				g.drawString(message, (800 - g.getFontMetrics().stringWidth(message)) / 2, 250);
+				g.drawString("Press any key", (800 - g.getFontMetrics().stringWidth("Press any key")) / 2, 300);
+				wildfireinterval_inc = 0;
 			}
 
 			// finally, we've completed drawing so clear up the graphics
 
 			// and flip the buffer over
-
+			DevMessage(Integer.toString(wildfireinterval_inc));
+			
 			g.dispose();
 			strategy.show();
 
@@ -444,7 +436,7 @@ public class Game extends Canvas {
 
 			// isn't moving. If either cursor key is pressed then
 
-			// update the movement appropraitely
+			// update the movement
 
 			ship.setHorizontalMovement(0);
 
@@ -461,6 +453,15 @@ public class Game extends Canvas {
 
 			}
 
+			// The wild alien fires every wildfireinterval seconds
+
+//			wildfireinterval_inc++;
+
+//			if (wildfireinterval_inc > wildfireinterval_milli) {
+////				WildShoots();
+//				wildfireinterval_inc = 0;
+//			}
+
 			// finally pause for a bit. Note: this should run us at about
 
 			// 100 fps but on windows this might vary each loop due to
@@ -476,29 +477,27 @@ public class Game extends Canvas {
 
 	/**
 	 * A class to handle keyboard input from the user. The class handles both
-	 * dynamic input during game play, i.e. left/right and shoot, and more
-	 * static type input (i.e. press any key to continue)
+	 * dynamic input during game play, i.e. left/right and shoot, and more static
+	 * type input (i.e. press any key to continue)
 	 * 
-	 * This has been implemented as an inner class more through habbit then
-	 * anything else. Its perfectly normal to implement this as seperate class
-	 * if slight less convienient.
+	 * This has been implemented as an inner class more through habbit then anything
+	 * else. Its perfectly normal to implement this as seperate class if slight less
+	 * convienient.
 	 * 
 	 * @author Kevin Glass
 	 */
 	private class KeyInputHandler extends KeyAdapter {
 		/**
-		 * The number of key presses we've had while waiting for an "any key"
-		 * press
+		 * The number of key presses we've had while waiting for an "any key" press
 		 */
 		private int pressCount = 1;
 
 		/**
-		 * Notification from AWT that a key has been pressed. Note that a key
-		 * being pressed is equal to being pushed down but *NOT* released. Thats
-		 * where keyTyped() comes in.
+		 * Notification from AWT that a key has been pressed. Note that a key being
+		 * pressed is equal to being pushed down but *NOT* released. Thats where
+		 * keyTyped() comes in.
 		 *
-		 * @param e
-		 *            The details of the key that was pressed
+		 * @param e The details of the key that was pressed
 		 */
 		public void keyPressed(KeyEvent e) {
 			// if we're waiting for an "any key" typed then we don't
@@ -521,8 +520,7 @@ public class Game extends Canvas {
 		/**
 		 * Notification from AWT that a key has been released.
 		 *
-		 * @param e
-		 *            The details of the key that was released
+		 * @param e The details of the key that was released
 		 */
 		public void keyReleased(KeyEvent e) {
 			// if we're waiting for an "any key" typed then we don't
@@ -543,11 +541,10 @@ public class Game extends Canvas {
 		}
 
 		/**
-		 * Notification from AWT that a key has been typed. Note that typing a
-		 * key means to both press and then release it.
+		 * Notification from AWT that a key has been typed. Note that typing a key means
+		 * to both press and then release it.
 		 *
-		 * @param e
-		 *            The details of the key that was typed.
+		 * @param e The details of the key that was typed.
 		 */
 		public void keyTyped(KeyEvent e) {
 			// if we're waiting for a "any key" type then
@@ -583,11 +580,10 @@ public class Game extends Canvas {
 	}
 
 	/**
-	 * The entry point into the game. We'll simply create an instance of class
-	 * which will start the display and game loop.
+	 * The entry point into the game. We'll simply create an instance of class which
+	 * will start the display and game loop.
 	 * 
-	 * @param argv
-	 *            The arguments that are passed into our game
+	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
 		Game g = new Game();
@@ -600,27 +596,37 @@ public class Game extends Canvas {
 
 		g.gameLoop();
 	}
-	public void DrawLineTo10(Graphics2D g)
-	{
+
+	public void DrawLineTo10(Graphics2D g) {
 		Entity entity = (Entity) entities.get(10);
 		Entity ship = (Entity) entities.get(0);
-		
+
 		int x = entity.getX();
 		int y = entity.getY();
-		
+
 		int ship_x = ship.getX();
 		int ship_y = ship.getY();
-		
+
 		g.setColor(Color.red);
-		g.drawLine(x+20, y+20, ship_x, ship_y);
-		
+		g.drawLine(x + 20, y + 20, ship_x, ship_y);
+
 	}
-	public void DevMessage(String s)
-	{
+
+	public void DevMessage(String s) {
 		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 		g.setColor(Color.white);
-		g.drawString(s,5,590);
-		
+		g.drawString(s, 5, 590);
+
+	}
+
+	public void WildShoots() {
+
+		for (int i = 0; i < wildList.size(); i++) {
+			Entity wild = (Entity) wildList.get(i);
+			InvaderShot ishot = new InvaderShot(this, "sprites/shot.gif", wild.getX(), wild.getY());
+			// System.out.println(n.toString());
+			entities.add(ishot);
+		}
 	}
 }
 /*

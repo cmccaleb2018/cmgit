@@ -7,8 +7,8 @@ public class WildAlien extends AlienEntity {
 	public WildAlien(Game game, String ref, int x, int y) {
 		super(game, ref, x, y);
 		// TODO Auto-generated constructor stub
-		dx = -75;
-		dy = -75;
+		dx = 0;
+		dy = -10;
 		
 		this.game = game;
 
@@ -31,17 +31,34 @@ public class WildAlien extends AlienEntity {
 
 		// proceed with normal move
 
-		if ((x < 0) || (x > 600)) {
+		if ((x < 0) || (x > 800)) {
 			dx = -dx;
 		}
-		if ((y < 0) || (y > 800)) {
+		if ((y < 0) || (y > 600)) {
 			dy = -dy;
 		}
 		
-		game.DevMessage("Wild x = " + Math.round(x) + " y = " + Math.round(y));
+//		game.DevMessage("Wild x = " + Math.round(x) + " y = " + Math.round(y));
 
 		super.move(delta);
 		
 	}
+	
+//	public void doLogic() {
+//		// swap over horizontal movement and move down the
+//
+//		// screen a bit
+//
+////		dx = -dx;
+////		y += 10;
+//		
+//		// if we've reached the bottom of the screen then the player
+//
+//		// dies
+//
+////		if (y > 570) {
+////			game.notifyDeath();
+////		}
+//	}
 
 }
