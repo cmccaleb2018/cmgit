@@ -2,13 +2,15 @@ package spaceInvaders;
 
 public class WildAlien extends AlienEntity {
 	
+	private double moveSpeed = 75;
+	
 	private Game game;
 
 	public WildAlien(Game game, String ref, int x, int y) {
 		super(game, ref, x, y);
 		// TODO Auto-generated constructor stub
-		dx = 0;
-		dy = -10;
+		dx = -200;
+		dy = 200;
 		
 		this.game = game;
 
@@ -44,7 +46,7 @@ public class WildAlien extends AlienEntity {
 		
 	}
 	
-//	public void doLogic() {
+	public void doLogic() {
 //		// swap over horizontal movement and move down the
 //
 //		// screen a bit
@@ -59,6 +61,6 @@ public class WildAlien extends AlienEntity {
 ////		if (y > 570) {
 ////			game.notifyDeath();
 ////		}
-//	}
+	}
 
 }

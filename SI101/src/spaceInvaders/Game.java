@@ -1,4 +1,5 @@
-/// next - change rg alien to wild alien randomly, or maybe when they fire, maybe they are the only ones to fire
+/// wild alien - just add it to entities alone, so it can be removed? 
+
 /// go ahead and just find a gif for barriers; add barriers and some way to take damage, change color as they do 
 
 package spaceInvaders;
@@ -92,9 +93,12 @@ public class Game extends Canvas {
 	private ArrayList<Entity> wildList = new ArrayList<Entity>();
 
 	/** The interval in seconds for wild invader fire */
-	private int wildfireinterval = 4;
-	private int wildfireinterval_milli = wildfireinterval * 1000;
+	private int wildfireinterval = 1;
+	private int wildfireinterval_milli = wildfireinterval * 100;
 	private int wildfireinterval_inc = 0;
+	private int wildspawninterval_inc = 0;
+	private int wildspawninterval = 5;
+	private int wildspawninterval_milli = wildspawninterval  * 100; 
 
 	/**
 	 * Construct our game and set it running.
@@ -168,6 +172,7 @@ public class Game extends Canvas {
 		// clear out any existing entities and intialise a new set
 
 		entities.clear();
+		wildList.clear();
 		initEntities();
 
 		// blank out any keyboard settings we might currently have
@@ -193,13 +198,13 @@ public class Game extends Canvas {
 		alienCount = 0;
 		for (int row = 0; row < 5; row++) {
 			for (int x = 0; x < 12; x++) {
-				Entity alien = new AlienEntity(this, "sprites/alien.gif", 100 + (x * 50), (50) + row * 30);
+				Entity alien = new AlienEntity(this, "sprites/invader_sm.gif", 100 + (x * 50), (50) + row * 30);
 				entities.add(alien);
 				alienCount++;
 			}
 		}
 
-		WildAlien wild = new WildAlien(this, "sprites/alien.gif", 300, 10);
+		WildAlien2 wild = new WildAlien2(this, "sprites/invader_sm.gif", 300, 10);
 		entities.add(wild);
 		wildList.add(wild);
 
@@ -308,18 +313,16 @@ public class Game extends Canvas {
 
 		// pick random invader(s) and have them return fire
 
-		for (int x = 0; x < numInvadershots; x++) {
-
-			Random rand = new Random();
-			Integer n = rand.nextInt(alienCount) + 1;
-
-			Entity shooter = (Entity) entities.get(n);
-
-			InvaderShot ishot = new InvaderShot(this, "sprites/shot.gif", shooter.getX(), shooter.getY());
-			// System.out.println(n.toString());
-			entities.add(ishot);
-		}
-
+		/*
+		 * for (int x = 0; x < numInvadershots; x++) {
+		 * 
+		 * Random rand = new Random(); Integer n = rand.nextInt(alienCount) + 1;
+		 * 
+		 * Entity shooter = (Entity) entities.get(n);
+		 * 
+		 * InvaderShot ishot = new InvaderShot(this, "sprites/shot.gif", shooter.getX(),
+		 * shooter.getY()); // System.out.println(n.toString()); entities.add(ishot); }
+		 */
 	}
 
 	/**
@@ -397,6 +400,7 @@ public class Game extends Canvas {
 			// remove any entity that has been marked for clear up
 
 			entities.removeAll(removeList);
+			wildList.removeAll(removeList);
 			removeList.clear();
 
 			// if a game event has indicated that game logic should
@@ -428,7 +432,7 @@ public class Game extends Canvas {
 
 			// and flip the buffer over
 			DevMessage(Integer.toString(wildfireinterval_inc));
-			
+
 			g.dispose();
 			strategy.show();
 
@@ -455,12 +459,18 @@ public class Game extends Canvas {
 
 			// The wild alien fires every wildfireinterval seconds
 
-//			wildfireinterval_inc++;
+			wildfireinterval_inc++;
 
-//			if (wildfireinterval_inc > wildfireinterval_milli) {
-////				WildShoots();
-//				wildfireinterval_inc = 0;
-//			}
+			if (wildfireinterval_inc > wildfireinterval_milli) {
+				WildShoots();
+				wildfireinterval_inc = 0;
+			}
+
+			wildspawninterval_inc++;
+			if (wildspawninterval_inc > wildspawninterval_milli) {
+				SpawnWild();
+				wildspawninterval_inc = 0;
+			}
 
 			// finally pause for a bit. Note: this should run us at about
 
@@ -623,10 +633,27 @@ public class Game extends Canvas {
 
 		for (int i = 0; i < wildList.size(); i++) {
 			Entity wild = (Entity) wildList.get(i);
-			InvaderShot ishot = new InvaderShot(this, "sprites/shot.gif", wild.getX(), wild.getY());
+			InvaderShot ishot = new InvaderShot(this, "sprites/shot.gif", wild.getX() + 10, wild.getY() + 10);
 			// System.out.println(n.toString());
 			entities.add(ishot);
 		}
+	}
+
+	public void SpawnWild() {
+
+		Random rand = new Random();
+		Integer n = rand.nextInt(alienCount) + 1;
+
+		Entity shooter = (Entity) entities.get(n);
+		removeList.add(shooter);
+		WildAlien2 wild = new WildAlien2(this, "sprites/invader_sm.gif", shooter.getX(), shooter.getY());
+		
+		entities.add(wild);
+		wildList.add(wild);
+		
+		// System.out.println(n.toString());
+		
+
 	}
 }
 /*
