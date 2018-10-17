@@ -63,7 +63,7 @@ public class ShotEntity extends Entity {
 		
 		// if we've hit an alien, kill it!
 
-		if (other instanceof AlienEntity) {
+		if (other instanceof AlienEntity || other instanceof WildAlien2) {
 			// remove the affected entities
 
 			game.removeEntity(this);
@@ -73,6 +73,7 @@ public class ShotEntity extends Entity {
 
 			game.notifyAlienKilled();
 			used = true;
+			game.score+=20;
 		}
 	}
 }

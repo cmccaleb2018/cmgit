@@ -21,8 +21,8 @@ public class WildAlien2 extends Entity {
 
 		
 		// TODO Auto-generated constructor stub
-		dx = -60;
-		dy = 60;
+		dx = -120;
+		dy = 120;
 		
 		this.game = game;
 		

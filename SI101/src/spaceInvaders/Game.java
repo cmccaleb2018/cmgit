@@ -1,4 +1,6 @@
 /// wild alien - just add it to entities alone, so it can be removed? 
+// check for collision with ship and wild alien?
+/// error after all aliens are kilt - random bound must be positive
 
 /// go ahead and just find a gif for barriers; add barriers and some way to take damage, change color as they do 
 
@@ -97,8 +99,10 @@ public class Game extends Canvas {
 	private int wildfireinterval_milli = wildfireinterval * 100;
 	private int wildfireinterval_inc = 0;
 	private int wildspawninterval_inc = 0;
-	private int wildspawninterval = 5;
+	private int wildspawninterval = 3;
 	private int wildspawninterval_milli = wildspawninterval  * 100; 
+	
+	public int score=0;
 
 	/**
 	 * Construct our game and set it running.
@@ -204,12 +208,14 @@ public class Game extends Canvas {
 			}
 		}
 
-		WildAlien2 wild = new WildAlien2(this, "sprites/invader_sm.gif", 300, 10);
+/*		WildAlien2 wild = new WildAlien2(this, "sprites/invader_sm.gif", 300, 10);
 		entities.add(wild);
-		wildList.add(wild);
+		wildList.add(wild);*/
 
 		/// add a block here?
 		// AlienEntity shield = new AlienEntity(null, message, alienCount, alienCount);
+		
+		SpawnWild();
 
 	}
 
@@ -432,6 +438,7 @@ public class Game extends Canvas {
 
 			// and flip the buffer over
 			DevMessage(Integer.toString(wildfireinterval_inc));
+			PostScore(Integer.toString(score));
 
 			g.dispose();
 			strategy.show();
@@ -454,7 +461,6 @@ public class Game extends Canvas {
 
 			if (firePressed) {
 				tryToFire();
-
 			}
 
 			// The wild alien fires every wildfireinterval seconds
@@ -466,6 +472,7 @@ public class Game extends Canvas {
 				wildfireinterval_inc = 0;
 			}
 
+			// spawn a wild alien / replace one of the others every wildspawninterval seconds
 			wildspawninterval_inc++;
 			if (wildspawninterval_inc > wildspawninterval_milli) {
 				SpawnWild();
@@ -626,6 +633,13 @@ public class Game extends Canvas {
 		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 		g.setColor(Color.white);
 		g.drawString(s, 5, 590);
+
+	}
+	
+	public void PostScore(String s) {
+		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+		g.setColor(Color.red);
+		g.drawString("Score = " + s, 20, 20);
 
 	}
 
