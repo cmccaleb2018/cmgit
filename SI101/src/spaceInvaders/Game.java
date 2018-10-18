@@ -9,7 +9,7 @@ package spaceInvaders;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
+
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -20,7 +20,7 @@ import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+
 import javax.swing.JPanel;
 
 import java.util.Random;
@@ -346,9 +346,7 @@ public class Game extends Canvas {
 
 		while (gameRunning) {
 			// work out how long its been since the last update, this
-
 			// will be used to calculate how far the entities should
-
 			// move this loop
 
 			long delta = System.currentTimeMillis() - lastLoopTime;

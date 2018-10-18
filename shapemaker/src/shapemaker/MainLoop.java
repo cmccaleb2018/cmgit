@@ -144,7 +144,7 @@ public class MainLoop extends Canvas {
 			Double x = p.getX();
 			Double y = p.getY();
 
-			DevMessage("x = " + x + "; y = " + y);
+//			DevMessage("x = " + x + "; y = " + y);
 //			DevMessage(Integer.toString(z) + " " + Character.toString(keytyped));
 
 			for (int i = 0; i < allPoints.size(); i++) {
@@ -370,9 +370,12 @@ public class MainLoop extends Canvas {
 		int polyArrayInt = 0;
 
 		for (int b = i; b < allPoints.size(); b++) {
+			
 			MovingPoint mp = (MovingPoint) allPoints.get(b);
+			
 			polyx[polyArrayInt] = mp.x + (pntSize / 2);
 			polyy[polyArrayInt] = mp.y + (pntSize / 2);
+			
 			polyArrayInt++;
 		}
 
@@ -385,7 +388,7 @@ public class MainLoop extends Canvas {
 		g.setColor(Color.cyan);
 		g.drawPolygon(p1);
 
-		g.setColor(Color.green);
+/*		g.setColor(Color.green);
 		g.fillPolygon(p1);
-	}
+*/	}
 }
