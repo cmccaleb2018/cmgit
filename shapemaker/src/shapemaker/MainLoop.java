@@ -1,45 +1,25 @@
 
 package shapemaker;
 
-import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import java.awt.Canvas;
-
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferStrategy;
-
-import java.util.Random;
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
-
 import java.util.ArrayList;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.util.Random;
 
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class MainLoop extends Canvas {
 
@@ -51,17 +31,21 @@ public class MainLoop extends Canvas {
 	private boolean waitingForKeyPress = true;
 	/** True if the left cursor key is currently pressed */
 	private boolean goLoop = true;
-	
-	private boolean firePressed = true; 
-	private boolean rightPressed = true; 
+
+	private boolean firePressed = true;
+	private boolean rightPressed = true;
 	private boolean leftPressed = true;
-	
-	private char keytyped;
-			
+
+	private ArrayList<MovingPoint> allPoints = new ArrayList<MovingPoint>();
+
+	public char keytyped;
+
+	private int pntSize = 10;
+	private int maxPolyPoints = 10;
 
 	/** The strategy that allows us to use accelerate page flipping */
 	private BufferStrategy strategy;
-	
+
 	public MainLoop() {
 		JFrame container = new JFrame("Shapes");
 
@@ -104,8 +88,22 @@ public class MainLoop extends Canvas {
 
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent me) {
-				System.out.println(me);
-				System.out.println(MouseInfo.getPointerInfo().getLocation());
+//				System.out.println(me);
+
+//				System.out.println(me.getX() + " " + me.getY());
+				// other MouseEvents: getButton as in:
+				// if( e.getButton() == MouseEvent.BUTTON3 )
+
+				/*
+				 * point spawn method. add point to array of points with coordinates of mouse
+				 * click and redraw from those each frame if there is more than one point, draw
+				 * a line shape from each point in order - last point to first drawPolygon()
+				 * give points random direction and have them 'float' around screen
+				 * 
+				 */
+
+				spawnPoint(me.getX(), me.getY());
+
 			}
 		});
 
@@ -121,7 +119,6 @@ public class MainLoop extends Canvas {
 
 	}
 
-
 	public static void main(String[] args) {
 
 		MainLoop ml = new MainLoop();
@@ -132,7 +129,11 @@ public class MainLoop extends Canvas {
 
 	public void TheLoop() {
 
+//		int z = 0;
+
 		while (goLoop) {
+
+			// z++;
 
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.black);
@@ -143,22 +144,53 @@ public class MainLoop extends Canvas {
 			Double x = p.getX();
 			Double y = p.getY();
 
-//			DevMessage("x = " + x + "; y = " + y);
-			DevMessage(Character.toString(keytyped));
-			
+			DevMessage("x = " + x + "; y = " + y);
+//			DevMessage(Integer.toString(z) + " " + Character.toString(keytyped));
+
+			for (int i = 0; i < allPoints.size(); i++) {
+				MovingPoint mp = (MovingPoint) allPoints.get(i);
+
+				mp.move();
+
+				g.setColor(mp.c);
+				g.fillOval(mp.x, mp.y, pntSize, pntSize);
+
+			}
+
+			// draw line if 2 points
+
+			if (allPoints.size() == 2) {
+				OnlyTwoPoints(g);
+			}
+
+			// draw polygon if more than 3 points
+
+			if (allPoints.size() > 2) {
+
+				MoreThanTwoPoints(g);
+
+			}
+
 			g.dispose();
 			strategy.show();
+
+//			if (z > 1000) {
+//				goLoop = false;
+//			}
+
+			try {
+				Thread.sleep(10);
+			} catch (Exception e) {
+			}
 		}
 
 	}
-
-	
 
 	private class KeyInputHandler extends KeyAdapter {
 		/**
 		 * The number of key presses we've had while waiting for an "any key" press
 		 */
-		private int pressCount = 1;
+//		private int pressCount = 1;
 
 		/**
 		 * Notification from AWT that a key has been pressed. Note that a key being
@@ -170,9 +202,9 @@ public class MainLoop extends Canvas {
 		public void keyPressed(KeyEvent e) {
 			// if we're waiting for an "any key" typed then we don't
 			// want to do anything with just a "press"
-			if (waitingForKeyPress) {
-				return;
-			}
+//			if (waitingForKeyPress) {
+//				return;
+//			}
 
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				leftPressed = true;
@@ -193,9 +225,9 @@ public class MainLoop extends Canvas {
 		public void keyReleased(KeyEvent e) {
 			// if we're waiting for an "any key" typed then we don't
 			// want to do anything with just a "released"
-			if (waitingForKeyPress) {
-				return;
-			}
+//			if (waitingForKeyPress) {
+//				return;
+//			}
 
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				leftPressed = false;
@@ -222,24 +254,24 @@ public class MainLoop extends Canvas {
 
 			// the shoot or move keys, hence the use of the "pressCount"
 			// counter.
-			
+
 			keytyped = e.getKeyChar();
 
-			if (waitingForKeyPress) {
-				if (pressCount == 1) {
-					// since we've now recieved our key typed
-
-					// event we can mark it as such and start
-
-					// our new game
-
-					waitingForKeyPress = false;
-					TheLoop();
-					pressCount = 0;
-				} else {
-					pressCount++;
-				}
-			}
+//			if (waitingForKeyPress) {
+//				if (pressCount == 1) {
+//					// since we've now recieved our key typed
+//
+//					// event we can mark it as such and start
+//
+//					// our new game
+//
+//					waitingForKeyPress = false;
+//					TheLoop();
+//					pressCount = 0;
+//				} else {
+//					pressCount++;
+//				}
+//			}
 
 			// if we hit escape, then quit the game
 
@@ -256,4 +288,104 @@ public class MainLoop extends Canvas {
 
 	}
 
+	public void spawnPoint(int x, int y) {
+
+		MovingPoint mp = new MovingPoint(x, y);
+		allPoints.add(mp);
+
+	}
+
+	private class MovingPoint extends Point {
+
+		private static final long serialVersionUID = 6360717428310632663L;
+		private int dx = 1;
+		private int dy = 1;
+		private int x;
+		private int y;
+		private Color c = Color.yellow;
+
+		private MovingPoint(int given_x, int given_y) {
+
+			this.x = given_x;
+			this.y = given_y;
+
+			Random rand = new Random();
+			dx = rand.nextInt(10) + 1;
+			if (dx < 6) {
+				dx = -1;
+			} else {
+				dx = 1;
+			}
+			dy = rand.nextInt(10) + 1;
+			if (dy < 6) {
+				dy = -1;
+			} else {
+				dy = 1;
+			}
+
+		}
+
+		private void move() {
+
+			if (x > FRAME_WIDTH - pntSize || x < 0) {
+				dx = -dx;
+			}
+			if (y > FRAME_HEIGHT - pntSize || y < 0) {
+				dy = -dy;
+			}
+			x = x + dx;
+			y = y + dy;
+		}
+
+	}
+
+	private void OnlyTwoPoints(Graphics2D g) {
+		MovingPoint mp = (MovingPoint) allPoints.get(0);
+		MovingPoint mp2 = (MovingPoint) allPoints.get(1);
+		g.setColor(Color.cyan);
+		g.drawLine(mp.x + (pntSize / 2), mp.y + (pntSize / 2), mp2.x + (pntSize / 2), mp2.y + (pntSize / 2));
+	}
+
+	private void MoreThanTwoPoints(Graphics2D g) {
+		/*
+		 * strangely difficult to create a dynamic integer array with the List /
+		 * ArrayList method I get the cannot convert from List<Integer> to int[] error
+		 * FOr now just limiting to maxPolyPoints points
+		 */
+
+//	List<Integer> polyx = new ArrayList<Integer>();
+//	List<Integer> polyy = new ArrayList<Integer>();
+
+		int[] polyx = new int[maxPolyPoints];
+		int[] polyy = new int[maxPolyPoints];
+
+		int i = allPoints.size() - maxPolyPoints;
+
+		if (i < 0) {
+			i = 0;
+		}
+
+		/// could be items 16 through 19 - need to convert that to 0 through 4
+
+		int polyArrayInt = 0;
+
+		for (int b = i; b < allPoints.size(); b++) {
+			MovingPoint mp = (MovingPoint) allPoints.get(b);
+			polyx[polyArrayInt] = mp.x + (pntSize / 2);
+			polyy[polyArrayInt] = mp.y + (pntSize / 2);
+			polyArrayInt++;
+		}
+
+		Polygon p1 = new Polygon();
+
+		p1.xpoints = polyx;
+		p1.ypoints = polyy;
+		p1.npoints = polyArrayInt; // allPoints.size();
+
+		g.setColor(Color.cyan);
+		g.drawPolygon(p1);
+
+		g.setColor(Color.green);
+		g.fillPolygon(p1);
+	}
 }
