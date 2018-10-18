@@ -24,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import java.util.Random;
-import java.util.TimerTask;
 
 /**
  * The main hook of our game. This class with both act as a manager for the
@@ -86,7 +85,7 @@ public class Game extends Canvas {
 	private boolean logicRequiredThisLoop = false;
 
 	/** The number of invader shots to one ship shot */
-	private int numInvadershots = 2;
+//	private int numInvadershots = 2;
 
 	private static int FRAME_WIDTH = 800;
 	private static int FRAME_HEIGHT = 600;
@@ -654,6 +653,8 @@ public class Game extends Canvas {
 	}
 
 	public void SpawnWild() {
+		
+		if (alienCount <1) {return;}
 
 		Random rand = new Random();
 		Integer n = rand.nextInt(alienCount) + 1;
