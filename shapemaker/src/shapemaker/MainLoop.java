@@ -1,4 +1,7 @@
-
+/* do a thing where dots reach out to other dots and snag them randomly.
+or maybe a certain number create a polygon and drops it / stores it somewhere? transforms it to something that rings the edge?
+ * 
+ */
 package shapemaker;
 
 import java.awt.Canvas;
@@ -41,7 +44,7 @@ public class MainLoop extends Canvas {
 	public char keytyped;
 
 	private int pntSize = 10;
-	private int maxPolyPoints = 10;
+	private int maxPolyPoints = 4;
 
 	/** The strategy that allows us to use accelerate page flipping */
 	private BufferStrategy strategy;
@@ -303,6 +306,7 @@ public class MainLoop extends Canvas {
 		private int x;
 		private int y;
 		private Color c = Color.yellow;
+		private boolean dead = false;
 
 		private MovingPoint(int given_x, int given_y) {
 
@@ -323,6 +327,13 @@ public class MainLoop extends Canvas {
 				dy = 1;
 			}
 
+			Color[] colors = new Color[] { Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.PINK, Color.ORANGE,
+					Color.GRAY, Color.MAGENTA };
+
+			int colPick = rand.nextInt(colors.length);
+
+			c = colors[colPick];
+
 		}
 
 		private void move() {
@@ -333,8 +344,13 @@ public class MainLoop extends Canvas {
 			if (y > FRAME_HEIGHT - pntSize || y < 0) {
 				dy = -dy;
 			}
+
 			x = x + dx;
 			y = y + dy;
+
+			if (dead == true && y == FRAME_HEIGHT - pntSize) {
+				dy = 0;
+			}
 		}
 
 	}
@@ -363,19 +379,33 @@ public class MainLoop extends Canvas {
 
 		if (i < 0) {
 			i = 0;
-		}
+		} else {
+			/*
+			 * drop the oldest point on the Polygon to the bottom
+			 * 
+			
+			/// could be items 7 through 10 - need to get 6
+			 * with maxPolyPoints of 4, i=6
+			 * 
+			 */
+			
 
-		/// could be items 16 through 19 - need to convert that to 0 through 4
+		/*	MovingPoint mp = (MovingPoint) allPoints.get(i);
+			mp.dx = 0;
+			mp.dy = 1;
+			mp.dead = true;*/
+
+		}
 
 		int polyArrayInt = 0;
 
 		for (int b = i; b < allPoints.size(); b++) {
-			
+
 			MovingPoint mp = (MovingPoint) allPoints.get(b);
-			
+
 			polyx[polyArrayInt] = mp.x + (pntSize / 2);
 			polyy[polyArrayInt] = mp.y + (pntSize / 2);
-			
+
 			polyArrayInt++;
 		}
 
@@ -385,10 +415,10 @@ public class MainLoop extends Canvas {
 		p1.ypoints = polyy;
 		p1.npoints = polyArrayInt; // allPoints.size();
 
-		g.setColor(Color.cyan);
+		g.setColor(Color.green);
 		g.drawPolygon(p1);
 
-/*		g.setColor(Color.green);
-		g.fillPolygon(p1);
-*/	}
+		/*
+		 * g.setColor(Color.green); g.fillPolygon(p1);
+		 */ }
 }
