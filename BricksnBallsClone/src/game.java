@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.Random;
@@ -40,10 +41,10 @@ public class game extends Canvas {
 	private ArrayList<Block> blocks = new ArrayList<Block>();
 	private ArrayList<Shot> shots = new ArrayList<Shot>();
 
-	private int fussilade = 3;
+	private int fussilade = 1;
 	private boolean shotsStillInAir = false;
 
-	private int numBlocks = 10;
+	private int numBlocks = 40;
 
 	private int angle;
 
@@ -102,6 +103,8 @@ public class game extends Canvas {
 			g.setColor(Color.black);
 			g.fillRect(0, 0, 800, 600);
 
+			ArrayList<Block> zeroblocks = new ArrayList<Block>();
+
 			// draw blocks at new location
 
 			for (int i = 0; i < blocks.size(); i++) {
@@ -110,14 +113,22 @@ public class game extends Canvas {
 				/*
 				 * g.setColor(b.col); g.fillRect(b.x, b.y, b.height, b.width);
 				 */
-				b.draw(g);
+
+				if (b.strength > 0) {
+					b.draw(g);
+				} else {
+					zeroblocks.add(b);
+				}
 			}
+
+			blocks.removeAll(zeroblocks);
+			zeroblocks.clear();
 
 			Cannon cannon = new Cannon();
 			cannon.draw(g);
 
 			if (firePressed == true) {
-				for (int x = 0; x <= fussilade; x++) {
+				for (int x = 0; x < fussilade; x++) {
 					Shot s = new Shot();
 					shots.add(s);
 
@@ -131,11 +142,22 @@ public class game extends Canvas {
 
 					y.move();
 					y.draw(g);
-					
-					///  check for collision. for each block
-					/// reduce strength of that block, change dx of that shot
 
+					/// check for collision. for each block
+					/// reduce strength of that block, change dx of that shot
 				}
+			}
+
+			for (int x = 0; x < blocks.size(); x++) {
+
+				Block b = (Block) blocks.get(x);
+				for (int i = 0; i < shots.size(); i++) {
+
+					Shot y = (Shot) shots.get(i);
+
+					y.collidedWith(b);
+				}
+
 			}
 
 			DevMessage(1, Integer.toString(angle));
@@ -145,7 +167,7 @@ public class game extends Canvas {
 			strategy.show();
 
 			try {
-				Thread.sleep(10);
+				Thread.sleep(5);
 			} catch (Exception e) {
 			}
 
@@ -195,12 +217,22 @@ public class game extends Canvas {
 		/// add random spawn into Block definition
 		/// overload so that if args are given, they are used, and if not, use random
 
-		for (int x = 1; x <= numBlocks; x++) {
-			// Block b = new Block(100, 120, 120, 80, 10, Color.RED);
-			Block b = new Block();
-			blocks.add(b);
-		}
+		
+		  for (int x = 1; x <= numBlocks; x++) { 
+ 
+		  Block b = new Block(); blocks.add(b); }
+		 
 
+		/*blocks.add(new Block(100, 120, 120, 80, 10, Color.RED));
+		blocks.add(new Block(240, 120, 120, 80, 10, Color.BLUE));
+		blocks.add(new Block(400, 120, 120, 80, 10, Color.WHITE));
+		blocks.add(new Block(540, 120, 120, 80, 10, Color.GREEN));
+
+		blocks.add(new Block(80, 240, 120, 80, 20, Color.RED));
+		blocks.add(new Block(240, 240, 120, 80, 10, Color.BLUE));
+		blocks.add(new Block(400, 240, 120, 80, 10, Color.WHITE));
+		blocks.add(new Block(540, 240, 120, 80, 10, Color.GREEN));
+*/
 		angle = 45;
 
 	}
@@ -225,8 +257,8 @@ public class game extends Canvas {
 			int ny = rand.nextInt(8) * 100;
 			this.x = nx;
 			this.y = ny;
-			int nw = rand.nextInt(8) * 10;
-			int nh = rand.nextInt(8) * 10;
+			int nw = rand.nextInt(5) * 10;
+			int nh = rand.nextInt(12) * 10;
 			this.width = nw;
 			this.height = nh;
 			int ns = rand.nextInt(100);
@@ -246,10 +278,37 @@ public class game extends Canvas {
 		}
 
 		private void draw(Graphics2D g) {
+
 			g.setColor(this.col);
-			g.fillRect(this.x, this.y, this.height, this.width);
+			g.fillRect(this.x, this.y, this.width, this.height);
+
 			g.setColor(Color.black);
 			g.drawString(Integer.toString(this.strength), this.x, this.y + 10);
+
+			/// temp draw boundaries
+
+			Line2D line_left = new Line2D.Double();
+			Line2D line_right = new Line2D.Double();
+			Line2D line_top = new Line2D.Double();
+			Line2D line_bottom = new Line2D.Double();
+
+			line_left.setLine(this.getX(), this.getY(), this.getX(), this.getY() + this.getWidth());
+
+			line_right.setLine(this.getX() + this.getHeight(), this.getY(), this.getX() + this.getHeight(),
+					this.getY() + this.getWidth());
+
+			line_top.setLine(this.getX(), this.getY(), this.getX() + this.getHeight(), this.getY());
+
+			line_bottom.setLine(this.getX(), this.getY() + this.getWidth(), this.getX() + this.getHeight(),
+					this.getY() + this.getWidth());
+
+			/*
+			 * g.setColor(Color.RED); g.draw(line_left); g.setColor(Color.WHITE);
+			 * g.draw(line_right); g.setColor(Color.BLUE); g.draw(line_top);
+			 * g.setColor(Color.GREEN); g.draw(line_bottom);
+			 */
+
+			///
 		}
 
 	}
@@ -293,16 +352,31 @@ public class game extends Canvas {
 
 	}
 
-	private class Shot {
+	private class Shot extends Rectangle {
+
+		private static final long serialVersionUID = 6598889703259797397L;
 		private int dx_angle = 1;
-		private int dy_angle = 3;
-		private int x = 400;
-		private int y = 500;
+		private int dy_angle = 1;
+		/*
+		 * private int x = 400; private int y = 500;
+		 */
 		private int dx = -1;
 		private int dy = -1;
 		private int shotSize = 10;
+//		private Rectangle boundary = new Rectangle();
+		// look at getFrame instead
 
 		private Shot() {
+
+			/*
+			 * this.boundary.height = shotSize; this.boundary.width = shotSize;
+			 * this.boundary.x = this.x; this.boundary.y = this.y;
+			 */
+
+			x = 400;
+			y = 500;
+			width = shotSize;
+			height = shotSize;
 		}
 
 		private void draw(Graphics2D g) {
@@ -310,6 +384,10 @@ public class game extends Canvas {
 			Ellipse2D ellipse = new Ellipse2D.Double(x, y, shotSize, shotSize);
 			g.setColor(Color.WHITE);
 			g.draw(ellipse);
+
+			/*
+			 * g.setColor(Color.RED); g.draw(boundary);
+			 */
 
 		}
 
@@ -324,6 +402,59 @@ public class game extends Canvas {
 
 			x = x + (dx * dx_angle);
 			y = y + (dy * dy_angle);
+			/*
+			 * this.boundary.x = this.x; this.boundary.y = this.y;
+			 */
+
+		}
+
+		private void collidedWith(Block b) {
+			// boolean blReturn=false;
+
+			if (this.intersects(b)) {
+
+				b.strength = b.strength - 1;
+
+				Random rand = new Random();
+				int dirPick = rand.nextInt(3); // // c = colors[colPick]
+
+				switch (dirPick) {
+				case 0:
+					dx = -dx;
+					break;
+				case 1:
+					dy = -dy;
+				case 2:
+					dx = -dx;
+					dy = -dy;
+				}
+				b.col = Color.yellow;
+
+				// Determine which side of the box the shot hit
+
+				Line2D line_left = new Line2D.Double();
+				Line2D line_right = new Line2D.Double();
+				Line2D line_top = new Line2D.Double();
+				Line2D line_bottom = new Line2D.Double();
+
+				line_left.setLine(b.getX(), b.getY(), b.getX(), b.getY() + b.getWidth());
+
+				line_right.setLine(b.getX() + b.getHeight(), b.getY(), b.getX() + b.getHeight(),
+						b.getY() + b.getWidth());
+
+				line_top.setLine(b.getX(), b.getY(), b.getX() + b.getHeight(), b.getY());
+
+				line_bottom.setLine(b.getX(), b.getY() + b.getWidth(), b.getX() + b.getHeight(),
+						b.getY() + b.getWidth());
+
+				/*
+				 * if (this.boundary.intersectsLine(line_left)) { this.dx = -dx; } if
+				 * (this.boundary.intersectsLine(line_right)) { this.dx = -dx; } if
+				 * (this.boundary.intersectsLine(line_top)) { this.dy = -dy; } if
+				 * (this.boundary.intersectsLine(line_bottom)) { this.dy = -dy; }
+				 */
+
+			}
 
 		}
 
