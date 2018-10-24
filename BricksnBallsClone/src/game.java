@@ -40,6 +40,7 @@ public class game extends Canvas {
 
 	private ArrayList<Block> blocks = new ArrayList<Block>();
 	private ArrayList<Shot> shots = new ArrayList<Shot>();
+	private ArrayList<Shot> deadshots = new ArrayList<Shot>();
 
 	private int fussilade = 1;
 	private boolean shotsStillInAir = false;
@@ -148,6 +149,23 @@ public class game extends Canvas {
 				}
 			}
 
+			/// check for shots that landed at the bottom
+			/// if all shots in the fussilade are dead, reset shotsStillInAir
+
+			for (int i = 0; i < shots.size(); i++) {
+				Shot y = (Shot) shots.get(i);
+				if (y.alive == false) {
+					deadshots.add(y);
+				}
+
+			}
+			shots.removeAll(deadshots);
+			deadshots.clear();
+
+			if (shots.size() < 1) {
+				shotsStillInAir = false;
+			}
+
 			for (int x = 0; x < blocks.size(); x++) {
 
 				Block b = (Block) blocks.get(x);
@@ -155,7 +173,7 @@ public class game extends Canvas {
 
 					Shot y = (Shot) shots.get(i);
 
-					y.collidedWith(b);
+					y.collidedWith(b, g);
 				}
 
 			}
@@ -186,53 +204,56 @@ public class game extends Canvas {
 
 	private void initGameItems() {
 
-		/*
-		 * add random blocks with random strengths, labeled and w/ colors need block
-		 * class w/ color, size, position, strength, extending rectangle
-		 * 
-		 * add cannon - its angle will change based on rt and left arrows space fires a
-		 * ball
-		 * 
-		 * ball ricochets around blocks, subtracting one strength per hit, turn ends
-		 * when ball hits the bottom again angles must be calculated
-		 * 
-		 * score is kept
-		 * 
-		 * some blocks when hit add an additional ball to the fusillade
-		 * 
-		 * blocks lower one row each time - when they reach the bottom, game over
-		 *
-		 * 
-		 * 
-		 */
-
-		// NUMBLOCKS
-
-		/*
-		 * Random rand = new Random(); dx = rand.nextInt(10) + 1; if (dx < 6) { dx = -1;
-		 * } else { dx = 1; } dy = rand.nextInt(10) + 1; if (dy < 6) { dy = -1; } else {
-		 * dy = 1; }
-		 */
-
 		/// add random spawn into Block definition
 		/// overload so that if args are given, they are used, and if not, use random
-
 		
-		  for (int x = 1; x <= numBlocks; x++) { 
- 
-		  Block b = new Block(); blocks.add(b); }
-		 
+		// not quite right, should involve the width in x calcs and height for the y
 
-		/*blocks.add(new Block(100, 120, 120, 80, 10, Color.RED));
-		blocks.add(new Block(240, 120, 120, 80, 10, Color.BLUE));
-		blocks.add(new Block(400, 120, 120, 80, 10, Color.WHITE));
-		blocks.add(new Block(540, 120, 120, 80, 10, Color.GREEN));
+		int brickGap = 4; //6
+		int brickBotGap = -20;
+		int brickWidth = 35;
+		int brickHeight = 12;
+		int brickLeftMargin = 40;
+		int brickTopMargin = 50;
+		int brickRowNum = 15;
+		int brickColNum = 5;
+		
+		Color[] colors = new Color[] { Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.PINK, Color.ORANGE,
+				Color.GRAY, Color.MAGENTA };
 
-		blocks.add(new Block(80, 240, 120, 80, 20, Color.RED));
-		blocks.add(new Block(240, 240, 120, 80, 10, Color.BLUE));
-		blocks.add(new Block(400, 240, 120, 80, 10, Color.WHITE));
-		blocks.add(new Block(540, 240, 120, 80, 10, Color.GREEN));
-*/
+		Random rand = new Random();
+		int colPick = rand.nextInt(colors.length); // // c = colors[colPick];
+		
+
+		for (int x = 1; x <= brickRowNum; x++) {
+			for (int y = 1; y <= brickColNum; y++) {
+				blocks.add(new Block((brickLeftMargin * x) + (brickGap * (x - 1)),
+						(brickTopMargin * y) + (brickBotGap * (y - 1)), brickHeight, brickWidth, 101, colors[colPick]));
+			}
+		}
+
+		/*
+		 * for (int x = 1; x <= numBlocks; x++) {
+		 * 
+		 * Block b = new Block(); blocks.add(b); }
+		 */
+		/*
+		 * blocks.add(new Block(80, 80, 80, 120, 101, Color.white)); blocks.add(new
+		 * Block(240, 80, 80, 120, 10, Color.BLUE)); blocks.add(new Block(400, 80, 80,
+		 * 120, 10, Color.WHITE)); blocks.add(new Block(540, 80, 80, 120, 10,
+		 * Color.GREEN));
+		 * 
+		 * blocks.add(new Block(80, 200, 80, 120, 20, Color.RED)); blocks.add(new
+		 * Block(240, 200, 80, 120, 10, Color.BLUE)); blocks.add(new Block(400, 200, 80,
+		 * 120, 10, Color.WHITE)); blocks.add(new Block(540, 200, 80, 120, 10,
+		 * Color.GREEN));
+		 * 
+		 * blocks.add(new Block(80, 320, 80, 120, 20, Color.RED)); blocks.add(new
+		 * Block(240, 320, 80, 120, 10, Color.BLUE)); blocks.add(new Block(400, 320, 80,
+		 * 120, 10, Color.WHITE)); blocks.add(new Block(540, 320, 80, 120, 10,
+		 * Color.GREEN));
+		 */
+
 		angle = 45;
 
 	}
@@ -287,21 +308,23 @@ public class game extends Canvas {
 
 			/// temp draw boundaries
 
-			Line2D line_left = new Line2D.Double();
-			Line2D line_right = new Line2D.Double();
-			Line2D line_top = new Line2D.Double();
-			Line2D line_bottom = new Line2D.Double();
-
-			line_left.setLine(this.getX(), this.getY(), this.getX(), this.getY() + this.getWidth());
-
-			line_right.setLine(this.getX() + this.getHeight(), this.getY(), this.getX() + this.getHeight(),
-					this.getY() + this.getWidth());
-
-			line_top.setLine(this.getX(), this.getY(), this.getX() + this.getHeight(), this.getY());
-
-			line_bottom.setLine(this.getX(), this.getY() + this.getWidth(), this.getX() + this.getHeight(),
-					this.getY() + this.getWidth());
-
+			/*
+			 * Line2D line_left = new Line2D.Double(); Line2D line_right = new
+			 * Line2D.Double(); Line2D line_top = new Line2D.Double(); Line2D line_bottom =
+			 * new Line2D.Double();
+			 * 
+			 * line_left.setLine(this.getX(), this.getY(), this.getX(), this.getY() +
+			 * this.getWidth());
+			 * 
+			 * line_right.setLine(this.getX() + this.getHeight(), this.getY(), this.getX() +
+			 * this.getHeight(), this.getY() + this.getWidth());
+			 * 
+			 * line_top.setLine(this.getX(), this.getY(), this.getX() + this.getHeight(),
+			 * this.getY());
+			 * 
+			 * line_bottom.setLine(this.getX(), this.getY() + this.getWidth(), this.getX() +
+			 * this.getHeight(), this.getY() + this.getWidth());
+			 */
 			/*
 			 * g.setColor(Color.RED); g.draw(line_left); g.setColor(Color.WHITE);
 			 * g.draw(line_right); g.setColor(Color.BLUE); g.draw(line_top);
@@ -357,14 +380,10 @@ public class game extends Canvas {
 		private static final long serialVersionUID = 6598889703259797397L;
 		private int dx_angle = 1;
 		private int dy_angle = 1;
-		/*
-		 * private int x = 400; private int y = 500;
-		 */
 		private int dx = -1;
 		private int dy = -1;
 		private int shotSize = 10;
-//		private Rectangle boundary = new Rectangle();
-		// look at getFrame instead
+		private boolean alive = true;
 
 		private Shot() {
 
@@ -396,8 +415,12 @@ public class game extends Canvas {
 			if (x > FRAME_WIDTH - shotSize || x < 0) {
 				dx = -dx;
 			}
-			if (y > FRAME_HEIGHT - shotSize || y < 0) {
+			if (y < 0) {
 				dy = -dy;
+			}
+
+			if (y > FRAME_HEIGHT - shotSize) {
+				alive = false;
 			}
 
 			x = x + (dx * dx_angle);
@@ -408,27 +431,20 @@ public class game extends Canvas {
 
 		}
 
-		private void collidedWith(Block b) {
+		private void collidedWith(Block b, Graphics2D g) {
 			// boolean blReturn=false;
 
 			if (this.intersects(b)) {
 
 				b.strength = b.strength - 1;
 
-				Random rand = new Random();
-				int dirPick = rand.nextInt(3); // // c = colors[colPick]
-
-				switch (dirPick) {
-				case 0:
-					dx = -dx;
-					break;
-				case 1:
-					dy = -dy;
-				case 2:
-					dx = -dx;
-					dy = -dy;
-				}
-				b.col = Color.yellow;
+				/*
+				 * Random rand = new Random(); int dirPick = rand.nextInt(3); // // c =
+				 * colors[colPick]
+				 * 
+				 * switch (dirPick) { case 0: dx = -dx; break; case 1: dy = -dy; case 2: dx =
+				 * -dx; dy = -dy; } b.col = Color.yellow;
+				 */
 
 				// Determine which side of the box the shot hit
 
@@ -437,22 +453,38 @@ public class game extends Canvas {
 				Line2D line_top = new Line2D.Double();
 				Line2D line_bottom = new Line2D.Double();
 
-				line_left.setLine(b.getX(), b.getY(), b.getX(), b.getY() + b.getWidth());
+				line_left.setLine(b.getX(), b.getY(), b.getX(), b.getY() + b.getHeight());
 
-				line_right.setLine(b.getX() + b.getHeight(), b.getY(), b.getX() + b.getHeight(),
-						b.getY() + b.getWidth());
+				line_right.setLine(b.getX() + b.getWidth(), b.getY(), b.getX() + b.getWidth(),
+						b.getY() + b.getHeight());
 
-				line_top.setLine(b.getX(), b.getY(), b.getX() + b.getHeight(), b.getY());
+				line_top.setLine(b.getX(), b.getY(), b.getX() + b.getWidth(), b.getY());
 
-				line_bottom.setLine(b.getX(), b.getY() + b.getWidth(), b.getX() + b.getHeight(),
-						b.getY() + b.getWidth());
+				line_bottom.setLine(b.getX(), b.getY() + b.getHeight(), b.getX() + b.getWidth(),
+						b.getY() + b.getHeight());
 
-				/*
-				 * if (this.boundary.intersectsLine(line_left)) { this.dx = -dx; } if
-				 * (this.boundary.intersectsLine(line_right)) { this.dx = -dx; } if
-				 * (this.boundary.intersectsLine(line_top)) { this.dy = -dy; } if
-				 * (this.boundary.intersectsLine(line_bottom)) { this.dy = -dy; }
-				 */
+				g.draw(line_right);
+				g.draw(line_left);
+				g.draw(line_bottom);
+				g.draw(line_top);
+
+				if (this.intersectsLine(line_left)) {
+					this.dx = -dx;
+					this.x = b.x - this.width - 5;
+				}
+				if (this.intersectsLine(line_right)) {
+					this.dx = -dx;
+					this.x = b.x + b.width + 5;
+				}
+				if (this.intersectsLine(line_top)) {
+					this.dy = -dy;
+					this.y = b.y - this.height - 5;
+
+				}
+				if (this.intersectsLine(line_bottom)) {
+					this.dy = -dy;
+					this.y = b.y + b.height + 5;
+				}
 
 			}
 
@@ -522,3 +554,23 @@ public class game extends Canvas {
 	}
 
 }
+
+/*
+ * add random blocks with random strengths, labeled and w/ colors need block
+ * class w/ color, size, position, strength, extending rectangle
+ * 
+ * add cannon - its angle will change based on rt and left arrows space fires a
+ * ball
+ * 
+ * ball ricochets around blocks, subtracting one strength per hit, turn ends
+ * when ball hits the bottom again angles must be calculated
+ * 
+ * score is kept
+ * 
+ * some blocks when hit add an additional ball to the fusillade
+ * 
+ * blocks lower one row each time - when they reach the bottom, game over
+ *
+ * Some blocks capture the shot; others give random spin to it
+ * 
+ */
