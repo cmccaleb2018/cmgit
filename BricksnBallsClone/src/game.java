@@ -206,10 +206,10 @@ public class game extends Canvas {
 
 		/// add random spawn into Block definition
 		/// overload so that if args are given, they are used, and if not, use random
-		
+
 		// not quite right, should involve the width in x calcs and height for the y
 
-		int brickGap = 4; //6
+		int brickGap = 4; // 6
 		int brickBotGap = -20;
 		int brickWidth = 35;
 		int brickHeight = 12;
@@ -217,16 +217,16 @@ public class game extends Canvas {
 		int brickTopMargin = 50;
 		int brickRowNum = 15;
 		int brickColNum = 5;
-		
+
 		Color[] colors = new Color[] { Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.PINK, Color.ORANGE,
 				Color.GRAY, Color.MAGENTA };
 
 		Random rand = new Random();
-		int colPick = rand.nextInt(colors.length); // // c = colors[colPick];
-		
 
 		for (int x = 1; x <= brickRowNum; x++) {
 			for (int y = 1; y <= brickColNum; y++) {
+				int colPick = rand.nextInt(colors.length); // // c = colors[colPick];
+
 				blocks.add(new Block((brickLeftMargin * x) + (brickGap * (x - 1)),
 						(brickTopMargin * y) + (brickBotGap * (y - 1)), brickHeight, brickWidth, 101, colors[colPick]));
 			}
