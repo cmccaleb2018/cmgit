@@ -344,7 +344,7 @@ public class Game extends Canvas {
 			if (waitingForKeyPress) {
 				g.setColor(Color.white);
 				g.drawString(message,(800-g.getFontMetrics().stringWidth(message))/2,250);
-				g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
+				g.drawString("Press ANY key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
 			}
 			
 			// finally, we've completed drawing so clear up the graphics
