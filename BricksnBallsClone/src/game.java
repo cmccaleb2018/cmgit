@@ -27,10 +27,10 @@ public class game extends Canvas {
 	private static int FRAME_HEIGHT = 600;
 
 	private boolean firePressed = true;
-	 private boolean rightPressed = true;
-	 private boolean leftPressed = true;
+	private boolean rightPressed = true;
+	private boolean leftPressed = true;
 
-	 private boolean keyWasPressed = false;
+	private boolean keyWasPressed = false;
 
 	private BufferStrategy strategy;
 
@@ -48,6 +48,9 @@ public class game extends Canvas {
 	// private int numBlocks = 40;
 
 	private int angle;
+	
+	private Color strength_col = Color.black;
+	private int cannon_rotate_rate=4;
 
 	public game() {
 
@@ -209,17 +212,34 @@ public class game extends Canvas {
 
 		// not quite right, should involve the width in x calcs and height for the y
 
-		int brickGap = 4; // 6
-		int brickBotGap = -20;
-		int brickWidth = 35;
-		int brickHeight = 12;
-		int brickLeftMargin = 40;
+		int brickGap = 40; // 6
+		int brickBotGap = 10;
+		int brickWidth = 45;// 350;// 35;
+		int brickHeight = 25;// 200;// 12;
+		int brickLeftMargin = 30;
 		int brickTopMargin = 50;
-		int brickRowNum = 15;
-		int brickColNum = 5;
+		int brickRowNum = 15;// 1;// 15;
+		int brickColNum = 6;// 1;// 5;
 
-		Color[] colors = new Color[] { Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.PINK, Color.ORANGE,
-				Color.GRAY, Color.MAGENTA };
+//		Color[] colors = new Color[] { Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.PINK, Color.ORANGE,Color.GRAY, Color.MAGENTA };
+
+		Color c1, c2, c3, c4, c5, c6, c7;
+		c1 = new Color(0, 213, 255);
+		c2 = new Color(102, 230, 255);
+		c3 = new Color(191, 244, 255);
+		c4 = new Color(51, 221, 255);
+		c5 = new Color(20, 161, 189);
+		c6 = new Color(214, 248, 255);
+		c7 = new Color(47, 143, 163);
+
+		Color[] colors = new Color[] { c1, c2, c3, c4, c5, c6, c7 };
+
+		// Color myWhite = new Color(255, 255, 255);
+		// create a new Color
+		// RGB value of red is 225, 0, 0
+		// and set its alpha value as
+		// 100 out of 255
+		// Color c = new Color(255, 0, 0, 100);
 
 		Random rand = new Random();
 
@@ -303,7 +323,7 @@ public class game extends Canvas {
 			g.setColor(this.col);
 			g.fillRect(this.x, this.y, this.width, this.height);
 
-			g.setColor(Color.black);
+			g.setColor(strength_col);
 			g.drawString(Integer.toString(this.strength), this.x, this.y + 10);
 
 			/// temp draw boundaries
@@ -339,27 +359,29 @@ public class game extends Canvas {
 	private class Cannon {
 
 		private int length = 70;
-		private int orig_x =  400;
-		private int orig_y =  500;
+		private int orig_x = 400;
+		private int orig_y = 500;
 		private Color c = Color.GREEN;
 
 		private Cannon() {
 		}
 
 		private void draw(Graphics2D g) {
-			
-			double rad_angle = angle * Math.PI / 180;
+
+			int adj_angle = angle - 90;
+
+			double rad_angle = adj_angle * Math.PI / 180;
 
 			int x2 = (int) (length * Math.cos(rad_angle)) + orig_x;
 			int y2 = (int) (length * Math.sin(rad_angle)) + orig_y;
 
 			g.setColor(c);
 			g.drawLine(orig_x, orig_y, x2, y2);
-			//g.drawLine(0, 0, x2, y2);
+
 			String s = "X = " + Integer.toString(x2) + ", Y = " + Integer.toString(y2) + " a = " + angle;
 
 			g.drawString(s, x2, y2);
-			g.drawString(orig_x + ","+ orig_y, orig_x, orig_y);
+			g.drawString(orig_x + "," + orig_y, orig_x, orig_y);
 			DevMessage(2, s);
 
 		}
@@ -392,8 +414,9 @@ public class game extends Canvas {
 		private void draw(Graphics2D g) {
 
 			Ellipse2D ellipse = new Ellipse2D.Double(x, y, shotSize, shotSize);
-			g.setColor(Color.WHITE);
+			g.setColor(Color.RED);
 			g.draw(ellipse);
+			g.fill(ellipse);
 
 			/*
 			 * g.setColor(Color.RED); g.draw(boundary);
@@ -493,12 +516,15 @@ public class game extends Canvas {
 
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				leftPressed = true;
-				angle--;
+				
+				//angle--;
+				angle=roundAngle(angle-cannon_rotate_rate);
 
 			}
 			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
 				rightPressed = true;
-				angle++;
+//				angle++;
+				angle=roundAngle(angle+cannon_rotate_rate);
 
 			}
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -509,18 +535,13 @@ public class game extends Canvas {
 			}
 		}
 
-/*		public void keyReleased(KeyEvent e) {
-
-			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				leftPressed = false;
-			}
-			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				rightPressed = false;
-			}
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-//				firePressed = false;
-			}
-		}*/
+		/*
+		 * public void keyReleased(KeyEvent e) {
+		 * 
+		 * if (e.getKeyCode() == KeyEvent.VK_LEFT) { leftPressed = false; } if
+		 * (e.getKeyCode() == KeyEvent.VK_RIGHT) { rightPressed = false; } if
+		 * (e.getKeyCode() == KeyEvent.VK_SPACE) { // firePressed = false; } }
+		 */
 
 		public void keyTyped(KeyEvent e) {
 
@@ -541,6 +562,20 @@ public class game extends Canvas {
 		Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 		g.setColor(Color.white);
 		g.drawString(s, 5, baseline_y - nextLine * index);
+
+	}
+
+	private int roundAngle(int a) {
+		
+		int intReturn = a;
+		
+		if (a < 0) {
+			intReturn = 359;
+		}
+		if (a > 360) {
+			intReturn = 1;
+		}
+		return intReturn;
 
 	}
 
