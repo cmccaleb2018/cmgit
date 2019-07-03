@@ -24,6 +24,14 @@ public class Camera implements KeyListener{
 			forward = true;
 		if((key.getKeyCode() == KeyEvent.VK_DOWN))
 			back = true;
+		
+		// add for an ESC exit key. CM
+		// must be a better way to end the program
+		
+		if (key.getKeyChar() == 27) {
+			System.exit(0);
+		}
+		
 	}
 	public void keyReleased(KeyEvent key) {
 		if((key.getKeyCode() == KeyEvent.VK_LEFT))
