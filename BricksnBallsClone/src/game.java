@@ -27,10 +27,10 @@ public class game extends Canvas {
 	private static int FRAME_HEIGHT = 600;
 
 	private boolean firePressed = true;
-	private boolean rightPressed = true;
-	private boolean leftPressed = true;
+	 private boolean rightPressed = true;
+	 private boolean leftPressed = true;
 
-	private boolean keyWasPressed = false;
+	 private boolean keyWasPressed = false;
 
 	private BufferStrategy strategy;
 
@@ -45,7 +45,7 @@ public class game extends Canvas {
 	private int fussilade = 1;
 	private boolean shotsStillInAir = false;
 
-	private int numBlocks = 40;
+	// private int numBlocks = 40;
 
 	private int angle;
 
@@ -339,36 +339,27 @@ public class game extends Canvas {
 	private class Cannon {
 
 		private int length = 70;
-		private int orig_x = 400;
-		private int orig_y = 500;
+		private int orig_x =  400;
+		private int orig_y =  500;
 		private Color c = Color.GREEN;
 
 		private Cannon() {
 		}
 
 		private void draw(Graphics2D g) {
+			
+			double rad_angle = angle * Math.PI / 180;
 
-			/*
-			 * x = r * cos(a) y = r * sin(a)
-			 * 
-			 * (r=1 in a unit circle)
-			 */
-
-			/*
-			 * int x2 = (int) (length * Math.cos(angle)) + orig_x; int y2 = (int) (length *
-			 * Math.sin(angle)) + orig_y;
-			 */
-			int x2 = (int) (length * Math.cos(angle)) + orig_x;
-			int y2 = (int) (length * Math.sin(angle)) + orig_y;
-			/*
-			 * x2=orig_x; y2=orig_y-length;
-			 */
+			int x2 = (int) (length * Math.cos(rad_angle)) + orig_x;
+			int y2 = (int) (length * Math.sin(rad_angle)) + orig_y;
 
 			g.setColor(c);
 			g.drawLine(orig_x, orig_y, x2, y2);
-			String s = Integer.toString(x2) + ", " + Integer.toString(y2);
+			//g.drawLine(0, 0, x2, y2);
+			String s = "X = " + Integer.toString(x2) + ", Y = " + Integer.toString(y2) + " a = " + angle;
 
 			g.drawString(s, x2, y2);
+			g.drawString(orig_x + ","+ orig_y, orig_x, orig_y);
 			DevMessage(2, s);
 
 		}
@@ -518,7 +509,7 @@ public class game extends Canvas {
 			}
 		}
 
-		public void keyReleased(KeyEvent e) {
+/*		public void keyReleased(KeyEvent e) {
 
 			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 				leftPressed = false;
@@ -529,7 +520,7 @@ public class game extends Canvas {
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 //				firePressed = false;
 			}
-		}
+		}*/
 
 		public void keyTyped(KeyEvent e) {
 
