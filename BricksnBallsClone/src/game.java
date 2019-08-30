@@ -50,7 +50,9 @@ public class game extends Canvas {
 	private int angle;
 	
 	private Color strength_col = Color.black;
-	private int cannon_rotate_rate=4;
+	private int cannon_rotate_rate=10;
+	
+	private int fire_arc;
 
 	public game() {
 
@@ -369,18 +371,26 @@ public class game extends Canvas {
 		private void draw(Graphics2D g) {
 
 			int adj_angle = angle - 90;
+			//int cannon_rate = 30;
 
 			double rad_angle = adj_angle * Math.PI / 180;
+			
+			double new_angle = rad_angle; // + cannon_rate;
 
-			int x2 = (int) (length * Math.cos(rad_angle)) + orig_x;
-			int y2 = (int) (length * Math.sin(rad_angle)) + orig_y;
+			int x2 = (int) (length * Math.cos(new_angle)) + orig_x;
+			int y2 = (int) (length * Math.sin(new_angle)) + orig_y;
 
 			g.setColor(c);
 			g.drawLine(orig_x, orig_y, x2, y2);
+			
+			fire_arc=12;
 
-			String s = "X = " + Integer.toString(x2) + ", Y = " + Integer.toString(y2) + " a = " + angle;
+			String s = "X = " + Integer.toString(x2) + ", Y = " + Integer.toString(y2) + " a = " + rad_angle;
+			s = "angle: " + angle + " fire_arc= " + fire_arc + " rad: " + rad_angle + " final: " + new_angle;
+			
+			
 
-			g.drawString(s, x2, y2);
+			//g.drawString(s, x2, y2);
 			g.drawString(orig_x + "," + orig_y, orig_x, orig_y);
 			DevMessage(2, s);
 
@@ -391,10 +401,10 @@ public class game extends Canvas {
 	private class Shot extends Rectangle {
 
 		private static final long serialVersionUID = 6598889703259797397L;
-		private int dx_angle = 1;
-		private int dy_angle = 1;
-		private int dx = -1;
-		private int dy = -1;
+		private int dx_angle = 1; /*speed*/
+		private int dy_angle = 1; /*speed*/
+		private int dx = 1; /*angle*/
+		private int dy = -3;
 		private int shotSize = 10;
 		private boolean alive = true;
 
